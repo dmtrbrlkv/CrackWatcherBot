@@ -32,6 +32,8 @@ class Watcher(Thread):
                 logging.info(f"Watched {len(cw.last_game_infos)} new cracks")
                 self.send_info_to_subscribers(cw.last_game_infos, self.subscribe)
                 self.save_last_date(cw.last_check_date)
+            else:
+                logging.info(f"No new cracks")
             time.sleep(self.every)
 
     @staticmethod
