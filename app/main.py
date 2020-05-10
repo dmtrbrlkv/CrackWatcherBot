@@ -26,9 +26,10 @@ class Watcher(Thread):
         cw = crack_watch.CrackWatch(last_date=last_date)
 
         while True:
+            logging.info(f"Watch new cracks")
             cw.load_new_cracked()
-            logging.info(f"Watch {len(cw.last_game_infos)} new cracks")
             if cw.last_game_infos:
+                logging.info(f"Watched {len(cw.last_game_infos)} new cracks")
                 self.send_info_to_subscribers(cw.last_game_infos, self.subscribe)
                 self.save_last_date(cw.last_check_date)
             time.sleep(self.every)
