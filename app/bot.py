@@ -3,10 +3,11 @@ import json
 import urllib.parse
 import logging
 import argparse
+import os
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-t", action="store")
+parser.add_argument("-t", action="store", default=os.environ.get("TG_TOKEN"))
 args = parser.parse_args()
 
 import telebot
