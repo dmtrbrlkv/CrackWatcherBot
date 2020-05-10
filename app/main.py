@@ -5,13 +5,15 @@ import json
 import time
 import logging
 from threading import Thread
+import psycopg2
 
 
 class Watcher(Thread):
-    def __init__(self, every, subscribe):
+    def __init__(self, every, subscribe, cursor):
         super().__init__()
         self.every = every
         self.subscribe = subscribe
+        self.cursor = cursor
 
     @staticmethod
     def send_info_to_subscribers(game_infos, subscribe):
@@ -36,29 +38,24 @@ class Watcher(Thread):
                 logging.info(f"No new cracks")
             time.sleep(self.every)
 
-    @staticmethod
-    def load_last_date():
-        with open("app/config.json") as f:
-            config = json.load(f)
-        date = dateutil.parser.parse(config["last_date"])
-        return date
+    def load_last_date(self):
+        self.cursor.execute('SELECT * FROM last_watch')
+        date = self.cursor.fetchone()
+        return date[0]
 
-    @staticmethod
-    def save_last_date(date):
-        with open("app/config.json") as f:
-            config = json.load(f)
-        config["last_date"] = str(date)
-        with open("app/config.json", mode="w") as f:
-            json.dump(config, f)
+
+    def save_last_date(self, date):
+        self.cursor.execute(f"UPDATE last_watch SET date = '{str(date)}'")
 
 
 def main():
     logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname).1s %(message)s', datefmt='%Y.%m.%d %H:%M:%S')
 
     b = bot.bot
-
     subscribe = bot.subscribe
-    watcher = Watcher(5*60, subscribe)
+    cursor = bot.cursor
+
+    watcher = Watcher(5, subscribe, cursor)
     watcher.start()
 
     #

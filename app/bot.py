@@ -4,15 +4,23 @@ import urllib.parse
 import logging
 import argparse
 import os
+import psycopg2
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", action="store", default=os.environ.get("TG_TOKEN"))
+parser.add_argument("-d", action="store", default=os.environ.get("DATABASE_URL"))
 args = parser.parse_args()
 
 import telebot
 TOKEN = args.t
 RUTRACKER_URL = "https://rutracker.org/forum/tracker.php?nm="
+DATABASE_URL = args.d
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cursor = conn.cursor()
+conn.autocommit = True
+
 
 bot = telebot.TeleBot(TOKEN)
 cw = crack_watch.CrackWatch()
