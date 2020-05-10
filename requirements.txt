@@ -1,4 +1,4 @@
 pyTelegramBotAPI
-python-deteutil
+python-dateutil
 requests
 six
