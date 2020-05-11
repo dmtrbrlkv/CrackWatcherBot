@@ -84,7 +84,7 @@ def last_cracked(message, is_AAA):
         bot.send_message(message.chat.id, 'Please retry later', reply_markup=keyboard)
         return
 
-    for game_info in game_infos:
+    for game_info in game_infos[::-1]:
         send_game_info(message.chat.id, game_info)
 
 
