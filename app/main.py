@@ -56,7 +56,7 @@ def main():
     subscribe = bot.subscribe
     cursor = bot.cursor
 
-    watcher = Watcher(5, subscribe, cursor)
+    watcher = Watcher(5*60, subscribe, cursor)
     watcher.start()
 
     #

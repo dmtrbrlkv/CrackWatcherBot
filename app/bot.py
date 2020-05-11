@@ -32,28 +32,31 @@ keyboard.row('/AAA_crack_subscribe', '/All_crack_subscribe')
 keyboard.row('/Subscribe_stat', '/Unsubscribe')
 
 
-def load_subscribe():
-    with open("app/subscribe.json") as f:
-        subscribe = json.load(f)
+def load_subscribe(cursor):
+    cursor.execute('SELECT * FROM subscribe')
+    subscribe = {}
+    for row in cursor.fetchall():
+        subscribe[row[0]] = row[1]
     return subscribe
 
 
-subscribe = load_subscribe()
+subscribe = load_subscribe(cursor)
 
 
-def add_subscribe(id, is_AAA, subscribe):
+def add_subscribe(id, is_AAA, subscribe, cursor):
+    if str(id) in subscribe:
+        cursor.execute(f"UPDATE subscribe SET is_aaa={is_AAA} WHERE id='{str(id)}'")
+    else:
+        cursor.execute(f"INSERT INTO subscribe VALUES ({str(id)}, {is_AAA})")
     subscribe[str(id)] = is_AAA
-    with open("app/subscribe.json", mode="w") as f:
-        json.dump(subscribe, f)
 
 
-def remove_subscribe(id, subscribe):
+def remove_subscribe(id, subscribe, cursor):
     if str(id) not in subscribe:
         return
     del subscribe[str(id)]
 
-    with open("app/subscribe.json", mode="w") as f:
-        json.dump(subscribe, f)
+    cursor.execute(f"DELETE FROM subscribe WHERE id='{str(id)}'")
 
 
 def get_subscribe_stat(id, subscribe):
@@ -98,21 +101,21 @@ def last_cracked_AAA(message):
 @bot.message_handler(commands=['AAA_crack_subscribe'])
 def AAA_crack_subscribe(message):
     logging.info(f"AAA crack subscribe by {message.chat.id}")
-    add_subscribe(message.chat.id, True, subscribe)
+    add_subscribe(message.chat.id, True, subscribe, cursor)
     bot.send_message(message.chat.id, 'Successfully subscribed on AAA cracks', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['All_crack_subscribe'])
 def all_crack_subscribe(message):
     logging.info(f"All crack subscribe by {message.chat.id}")
-    add_subscribe(message.chat.id, False, subscribe)
+    add_subscribe(message.chat.id, False, subscribe, cursor)
     bot.send_message(message.chat.id, 'Successfully subscribed on all cracks', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['Unsubscribe'])
 def unsubscribe(message):
     logging.info(f"Unsubscribe by {message.chat.id}")
-    remove_subscribe(message.chat.id, subscribe)
+    remove_subscribe(message.chat.id, subscribe, cursor)
     bot.send_message(message.chat.id, 'Successfully unsubscribed', reply_markup=keyboard)
 
 
