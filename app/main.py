@@ -1,11 +1,9 @@
 import crack_watch
 import bot
-import dateutil.tz
-import json
 import time
 import logging
 from threading import Thread
-import psycopg2
+
 
 
 class Watcher(Thread):
@@ -55,8 +53,9 @@ def main():
     b = bot.bot
     subscribe = bot.subscribe
     cursor = bot.cursor
+    every = bot.every
 
-    watcher = Watcher(5*60, subscribe, cursor)
+    watcher = Watcher(every, subscribe, cursor)
     watcher.start()
 
     #
