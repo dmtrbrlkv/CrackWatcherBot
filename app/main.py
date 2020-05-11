@@ -50,6 +50,7 @@ class Watcher(Thread):
 
 def main():
     logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname).1s %(message)s', datefmt='%Y.%m.%d %H:%M:%S')
+    logging.info(f"Start")
 
     b = bot.bot
     subscribe = bot.subscribe
@@ -72,8 +73,8 @@ def main():
     #
     # # save_last_date(cw.last_check_date)
 
-    b.polling()
-
+    b.polling(none_stop=True)
+    logging.info(f"Stop")
 
 if __name__ == "__main__":
     main()
