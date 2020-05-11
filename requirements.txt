@@ -2,3 +2,4 @@ pyTelegramBotAPI
 python-dateutil
 requests
 six
+psycopg2
