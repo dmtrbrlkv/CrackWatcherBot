@@ -89,7 +89,7 @@ class CrackWatch:
     def load_new_cracked(self):
         data = self.load_data()
         if data is None:
-            return None
+            return False
 
         game_infos = []
         for game_data in data:
@@ -101,6 +101,7 @@ class CrackWatch:
 
         self.last_game_infos = game_infos
         self.update_check_date()
+        return True
 
     def update_check_date(self, date=None):
         if date is None:
